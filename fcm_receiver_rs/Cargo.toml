@@ -1,7 +1,10 @@
 [package]
 name = "fcm_receiver_rs"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
+authors = ["Agus Ibrahim"]
+description = "A Rust library that simulates an Android device to receive Firebase Cloud Messaging (FCM) notifications."
+license = "MIT OR Apache-2.0"
 
 [dependencies]
 regex = "1"
