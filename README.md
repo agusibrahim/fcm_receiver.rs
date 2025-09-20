@@ -1,5 +1,7 @@
 # Rust FCM Receiver
 
+<a href="https://crates.io/crates/fcm_receiver_rs"><img alt="fcm_receiver_rs on crates.io" src="https://img.shields.io/crates/v/fcm_receiver_rs"/></a>
+
 A Rust library that simulates an Android device to receive Firebase Cloud Messaging (FCM) notifications. This library allows your application to behave like a real device when receiving push notifications from FCM servers.
 
 ## Overview
