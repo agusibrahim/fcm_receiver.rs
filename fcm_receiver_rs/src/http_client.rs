@@ -305,12 +305,8 @@ pub fn send_fcm_install_request(
         request = request
             .header("x-ios-bundle-identifier", bundle_id)
             .header(
-                "x-firebase-client",
-                cfg.firebase_client_header.unwrap_or("H4sIAAAAAAAAE13QTY7CMAwF4KtUWTf9CRRG3XKB2U9ZuKk7jSbUUWwQCHF3AsOmXeZ7frLiu5oQovQIwqr9uSv4xVlUqyAEjzp4kJHiqSsdcfZvPPx1pdkemus0LWChiV0o8YzZg8HTrSkuWINDASS7Opth9TzRjbfI6G11EDb10ZW2Kr6L6wAz-Js7ykt3MAt6vkFZTAeO4lGiXb8ZlpQdGbSPwtN7qzyIY9btlfQqaoir2K39_eVtsU4FYXzCyozkdZZfgamlIab0_NEblagDB12WVqcxOV402tTo-jrn6tFRrHk9MDKPShQEAAA"),
-            )
-            .header(
                 USER_AGENT,
-                cfg.user_agent.unwrap_or("gopay_merchant/52 CFNetwork/3860.100.1 Darwin/25.0.0"),
+                cfg.user_agent.unwrap_or("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"),
             );
     } else {
         let client_info = serde_json::json!({
