@@ -41,6 +41,7 @@ pub struct FcmClient {
     pub on_data_message: Option<Arc<dyn Fn(Vec<u8>) + Send + Sync>>,
     pub on_raw_message: Option<Arc<dyn Fn(ManualDataMessageStanza) + Send + Sync>>,
     pub android_app: Option<AndroidApp>,
+    pub ios_bundle_id: Option<String>,
     http_client: HttpClient,
     private_key: Option<SecretKey>,
     public_key: Option<PublicKey>,
@@ -66,6 +67,7 @@ impl FcmClient {
             on_data_message: None,
             on_raw_message: None,
             android_app: None,
+            ios_bundle_id: None,
             http_client,
             private_key: None,
             public_key: None,
@@ -95,6 +97,7 @@ impl FcmClient {
             on_data_message: None,
             on_raw_message: None,
             android_app: None,
+            ios_bundle_id: None,
             http_client,
             private_key: None,
             public_key: None,
@@ -226,6 +229,7 @@ impl FcmClient {
             app_id: self.app_id.as_str(),
             fid: fid.as_str(),
             android_app,
+            ios_bundle_id: self.ios_bundle_id.as_deref(),
             firebase_client_header: None,
             firebase_client_log_type: None,
             user_agent: None,
@@ -268,6 +272,7 @@ impl FcmClient {
             auth_secret: auth_secret_b64.as_str(),
             endpoint: endpoint.as_str(),
             p256dh: public_key_b64.as_str(),
+            ios_bundle_id: self.ios_bundle_id.as_deref(),
         };
 
         let response = http_client::send_fcm_register_request(&self.http_client, &request)?;

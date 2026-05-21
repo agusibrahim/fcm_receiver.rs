@@ -64,6 +64,7 @@ pub struct FcmInstallRequest<'a> {
     pub app_id: &'a str,
     pub fid: &'a str,
     pub android_app: Option<AndroidAppOptions<'a>>,
+    pub ios_bundle_id: Option<&'a str>,
     pub firebase_client_header: Option<&'a str>,
     pub firebase_client_log_type: Option<&'a str>,
     pub user_agent: Option<&'a str>,
@@ -78,6 +79,7 @@ pub struct FcmRegisterRequest<'a> {
     pub auth_secret: &'a str,
     pub endpoint: &'a str,
     pub p256dh: &'a str,
+    pub ios_bundle_id: Option<&'a str>,
 }
 
 pub fn build_default_http_client() -> Result<Client> {
@@ -262,6 +264,8 @@ pub fn send_fcm_install_request(
 
     let sdk_version = if cfg.android_app.is_some() {
         "a:17.0.0"
+    } else if cfg.ios_bundle_id.is_some() {
+        "i:12.8.0"
     } else {
         "w:0.6.4"
     };
@@ -296,6 +300,17 @@ pub fn send_fcm_install_request(
             .header(
                 USER_AGENT,
                 cfg.user_agent.unwrap_or("Dalvik/2.1.0 (Linux; U; Android 11; SM-A217F Build/RP1A.200720.012)"),
+            );
+    } else if let Some(bundle_id) = cfg.ios_bundle_id {
+        request = request
+            .header("x-ios-bundle-identifier", bundle_id)
+            .header(
+                "x-firebase-client",
+                cfg.firebase_client_header.unwrap_or("H4sIAAAAAAAAE13QTY7CMAwF4KtUWTf9CRRG3XKB2U9ZuKk7jSbUUWwQCHF3AsOmXeZ7frLiu5oQovQIwqr9uSv4xVlUqyAEjzp4kJHiqSsdcfZvPPx1pdkemus0LWChiV0o8YzZg8HTrSkuWINDASS7Opth9TzRjbfI6G11EDb10ZW2Kr6L6wAz-Js7ykt3MAt6vkFZTAeO4lGiXb8ZlpQdGbSPwtN7qzyIY9btlfQqaoir2K39_eVtsU4FYXzCyozkdZZfgamlIab0_NEblagDB12WVqcxOV402tTo-jrn6tFRrHk9MDKPShQEAAA"),
+            )
+            .header(
+                USER_AGENT,
+                cfg.user_agent.unwrap_or("gopay_merchant/52 CFNetwork/3860.100.1 Darwin/25.0.0"),
             );
     } else {
         let client_info = serde_json::json!({
@@ -349,16 +364,20 @@ pub fn send_fcm_register_request(
         },
     };
 
-    let response = client
+    let mut request = client
         .post(format!(
             "{}projects/{}/registrations",
             FIREBASE_REGISTRATION_URL, cfg.project_id
         ))
         .header("x-goog-api-key", cfg.api_key)
         .header("x-goog-firebase-installations-auth", cfg.installation_auth)
-        .header(CONTENT_TYPE, "application/json")
-        .json(&body)
-        .send()?;
+        .header(CONTENT_TYPE, "application/json");
+
+    if let Some(bundle_id) = cfg.ios_bundle_id {
+        request = request.header("x-ios-bundle-identifier", bundle_id);
+    }
+
+    let response = request.json(&body).send()?;
 
     let status = response.status();
     let bytes = response.bytes()?;

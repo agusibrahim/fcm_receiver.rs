@@ -47,9 +47,9 @@ fn save_credentials(path: &PathBuf, creds: &DeviceCredentials) -> Result<()> {
 }
 
 fn main() -> Result<()> {
-    const API_KEY: &str = "AIzaSyabHiDUp....joKOwI-feQYwg";
-    const APP_ID: &str = "1:xxxx:android:xxxx";
-    const PROJECT_ID: &str = "xxxx-yyyy";
+    const API_KEY: &str = "YOUR_API_KEY";
+    const APP_ID: &str = "YOUR_APP_ID";
+    const PROJECT_ID: &str = "YOUR_PROJECT_ID";
     const TOPIC_TO_SUBSCRIBE: &str = "promotions";
 
     let credentials_path = PathBuf::from("device_credentials.json");
@@ -59,6 +59,7 @@ fn main() -> Result<()> {
         APP_ID.to_string(),
         PROJECT_ID.to_string(),
     )?;
+    client.ios_bundle_id = Some("YOUR_IOS_BUNDLE_ID".to_string());
     client.on_data_message = Some(Arc::new(|payload| {
         let text = String::from_utf8_lossy(&payload);
         println!("Received message: {}", &text);

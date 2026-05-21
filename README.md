@@ -87,6 +87,30 @@ keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -sto
 # Just passing: "2E4A3B8C1D9EF5A0B6C7D8E9F0A1B2C3D4E5F6"
 ```
 
+## iOS Bundle ID Configuration (optional)
+
+For Firebase projects where the API key is restricted by **Application Restrictions** to a specific iOS Bundle ID, you must specify the corresponding `ios_bundle_id`. 
+
+Specifying `ios_bundle_id` will automatically emulate the iOS signature and headers (e.g. `x-ios-bundle-identifier` header, iOS SDK version `i:12.8.0`, and iOS User-Agent) during Firebase installation and registration.
+
+```rust
+use fcm_receiver_rs::client::FcmClient;
+
+fn main() -> Result<()> {
+    let mut client = FcmClient::new(
+        "YOUR_API_KEY".to_string(),
+        "YOUR_APP_ID".to_string(), // iOS App ID format: 1:123456:ios:abc1234
+        "YOUR_PROJECT_ID".to_string(),
+    )?;
+
+    // Configure iOS Bundle ID to bypass restricted API Key checks
+    client.ios_bundle_id = Some("com.example.app".to_string());
+
+    // Continue with registration...
+    Ok(())
+}
+```
+
 ## Installation
 
 Add to your `Cargo.toml`:
