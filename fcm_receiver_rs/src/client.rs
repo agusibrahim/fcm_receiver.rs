@@ -2,8 +2,8 @@ use std::collections::HashSet;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
-use base64::engine::general_purpose::{STANDARD as BASE64_STANDARD, URL_SAFE, URL_SAFE_NO_PAD};
 use base64::Engine;
+use base64::engine::general_purpose::{STANDARD as BASE64_STANDARD, URL_SAFE, URL_SAFE_NO_PAD};
 use rand::Rng;
 use reqwest::blocking::Client as HttpClient;
 
@@ -14,8 +14,8 @@ use crate::http_client::{
     self, AndroidAppOptions, FcmInstallRequest, FcmRegisterRequest, GcmRegisterRequest,
 };
 use crate::messages::{
-    create_check_in_request, create_login_request_raw, decode_data_message_stanza,
-    ManualDataMessageStanza,
+    ManualDataMessageStanza, create_check_in_request, create_login_request_raw,
+    decode_data_message_stanza,
 };
 use crate::socket_handler::SocketHandler;
 use crate::util;
@@ -281,11 +281,15 @@ impl FcmClient {
 
     pub fn start_listening(&mut self) -> Result<()> {
         if self.android_id == 0 || self.security_token == 0 {
-            return Err(Error::InvalidData("client's AndroidId and SecurityToken hasn't been set. use FcmClient.register() to generate a new AndroidId and SecurityToken"));
+            return Err(Error::InvalidData(
+                "client's AndroidId and SecurityToken hasn't been set. use FcmClient.register() to generate a new AndroidId and SecurityToken",
+            ));
         }
 
         if self.private_key.is_none() || self.auth_secret.is_none() {
-            return Err(Error::InvalidData("client's private key hasn't been set. use FcmClient.load_keys() or FcmClient.create_new_keys()"));
+            return Err(Error::InvalidData(
+                "client's private key hasn't been set. use FcmClient.load_keys() or FcmClient.create_new_keys()",
+            ));
         }
 
         let persistent_ids: Vec<String> = self
@@ -463,6 +467,10 @@ impl FcmClient {
         if let Some(mut socket_handler) = self.socket_handler.take() {
             socket_handler.close();
         }
+    }
+
+    pub fn set_persistent_ids(&mut self, ids: HashSet<String>) {
+        self.persistent_ids.lock().unwrap().extend(ids);
     }
 
     pub fn remove_persistent_id(&self, id: &str) {
